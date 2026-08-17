@@ -1,0 +1,11 @@
+build/
+__pycache__/
+*.pyc
+*.idsig
+*.jks
+*.keystore
+*.ab
+*.tar
+/tmp/
+.env
+*.class

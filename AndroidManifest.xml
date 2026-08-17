@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    VulnLab — Intentionally Vulnerable Android App
+    Covers all vulnerability classes from Android APK VulnResearch Guide sections 11.1–11.9
+    FOR AUTHORIZED SECURITY RESEARCH AND EDUCATION ONLY
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vulnlab.insecureapp"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <!-- Dangerous manifest-level flags (Section 4.3 checklist) -->
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:label="VulnLab"
+        android:debuggable="true"
+        android:allowBackup="true"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <!-- ── MAIN ENTRY ─────────────────────────────────────────────── -->
+        <activity android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ── 11.1 Component Exposure: exported Activity, no permission ─ -->
+        <activity android:name=".AdminActivity"
+            android:exported="true" />
+
+        <!-- ── 11.2 PendingIntent misuse ────────────────────────────────── -->
+        <activity android:name=".PendingIntentActivity"
+            android:exported="true" />
+
+        <!-- ── 11.3 ContentProvider — SQL injection + path traversal ────── -->
+        <provider
+            android:name=".VulnContentProvider"
+            android:authorities="com.vulnlab.insecureapp.provider"
+            android:exported="true"
+            android:grantUriPermissions="true" />
+
+        <!-- ── 11.3 File-serving provider — path traversal ──────────────── -->
+        <provider
+            android:name=".FileVulnProvider"
+            android:authorities="com.vulnlab.insecureapp.fileprovider"
+            android:exported="true"
+            android:grantUriPermissions="true" />
+
+        <!-- ── 11.4 Deep Link / URL Scheme ──────────────────────────────── -->
+        <activity android:name=".DeepLinkActivity"
+            android:exported="true">
+            <!-- Custom URL scheme (no autoVerify = any app can claim it) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vulnlab" android:host="app" />
+            </intent-filter>
+            <!-- App Links without autoVerify (unverified) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="vulnlab.example.com"
+                      android:pathPrefix="/reset" />
+            </intent-filter>
+            <!-- OAuth callback -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="vulnlab" android:host="oauth" android:path="/callback" />
+            </intent-filter>
+        </activity>
+
+        <!-- ── 11.5 Broadcast Receiver — exported, no permission ─────────── -->
+        <!-- Intent Redirect (11.2) -->
+        <receiver android:name=".IntentRedirectReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.vulnlab.insecureapp.RELAY_ACTION" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Config override (11.5) -->
+        <receiver android:name=".ConfigReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.vulnlab.insecureapp.ACTION_UPDATE_CONFIG" />
+            </intent-filter>
+        </receiver>
+
+        <!-- ── 11.6 Insecure Data Storage ──────────────────────────────── -->
+        <activity android:name=".StorageActivity"
+            android:exported="true" />
+
+        <!-- ── 11.7 Cryptography Failures ──────────────────────────────── -->
+        <activity android:name=".CryptoActivity"
+            android:exported="true" />
+
+        <!-- ── 11.8 Insecure WebView ─────────────────────────────────────── -->
+        <activity android:name=".WebViewActivity"
+            android:exported="true">
+            <!-- Implicit export via intent-filter with no permission -->
+            <intent-filter>
+                <action android:name="com.vulnlab.insecureapp.OPEN_URL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- ── 11.9 Dynamic Code Loading ─────────────────────────────────── -->
+        <activity android:name=".DynamicCodeActivity"
+            android:exported="true" />
+
+    </application>
+</manifest>

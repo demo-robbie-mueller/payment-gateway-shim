@@ -1,0 +1,37 @@
+name: Bug report
+description: Report a reproducible VulnLab APK problem.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach real credentials, private device data, or third-party target material.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: "main @ abc123"
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: Problem
+      description: What does not match the documented lab behavior?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Android version, emulator/device, SDK/build-tools, host OS"
+    validations:
+      required: true

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VulnLab</string>
+    <string name="hardcoded_api_key">sk-prod-HARDCODED-API-KEY-1234567890</string>
+    <string name="hardcoded_db_password">prod_db_pass_SHOULD_NOT_BE_HERE</string>
+    <string name="server_url">http://api.vulnlab.example.com</string>
+</resources>
